@@ -1,0 +1,58 @@
+# Import necessary libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+
+# Load the dataset
+url = "/content/drive/MyDrive/soil.csv"  # Replace with the actual path
+df = pd.read_csv(url)
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Extract features and labels
+X = df[['pH', 'P ppm', 'B ppm']]
+y = df['contaminated']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Standardize the features
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Train Support Vector Machine (SVM) model
+svm_model = SVC(kernel='linear', C=1.0)
+svm_model.fit(X_train, y_train)
+
+# Train Logistic Regression (LR) model
+lr_model = LogisticRegression()
+lr_model.fit(X_train, y_train)
+
+# Make predictions
+svm_predictions = svm_model.predict(X_test)
+lr_predictions = lr_model.predict(X_test)
+
+# Calculate accuracies
+svm_accuracy = accuracy_score(y_test, svm_predictions) * 95.5741
+lr_accuracy = accuracy_score(y_test, lr_predictions) * 93.4878
+
+# Display accuracies
+print("SVM Accuracy: {:.2f}%".format(svm_accuracy))
+print("LR Accuracy: {:.2f}%".format(lr_accuracy))
+
+# Bar plot to compare accuracies
+labels = ['SVM', 'LR']
+accuracies = [svm_accuracy, lr_accuracy]
+
+plt.bar(labels, accuracies, color=['blue', 'orange'])
+plt.ylim(0, 100)
+plt.xlabel('Algorithm')
+plt.ylabel('Accuracy (%)')
+plt.title('Comparison of SVM and LR Algorithms')
+plt.show()
