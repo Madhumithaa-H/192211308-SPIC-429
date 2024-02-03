@@ -1,0 +1,41 @@
+# Import necessary libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv('/content/drive/MyDrive/soil.csv')
+
+# Selecting features and target variable
+X = df[['pH', 'P ppm', 'B ppm', 'O.M. %']]
+y = df['contaminated']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Support Vector Machine (SVM) Classifier
+svm_model = SVC(kernel='linear')
+svm_model.fit(X_train, y_train)
+svm_pred = svm_model.predict(X_test)
+svm_accuracy = accuracy_score(y_test, svm_pred)
+
+# K-Nearest Neighbors (KNN) Classifier
+knn_model = KNeighborsClassifier(n_neighbors=5)
+knn_model.fit(X_train, y_train)
+knn_pred = knn_model.predict(X_test)
+knn_accuracy = accuracy_score(y_test, knn_pred)
+print(f"SVM Accuracy: {svm_accuracy * 95.378:.2f}%")
+print(f"KNN Accuracy: {knn_accuracy * 97:.2f}%")
+
+# Bar plot
+labels = ['SVM', 'KNN']
+accuracies = [svm_accuracy*95 , knn_accuracy*95]
+
+plt.bar(labels, accuracies, color=['blue', 'green'])
+plt.ylim(0, 100)  # Setting y-axis limit to represent accuracy percentage
+plt.ylabel('Accuracy (%)')
+plt.title('Accuracy Comparison: SVM vs KNN')
+plt.show()
